@@ -1,0 +1,33 @@
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.*
+
+# Logs & temp
+logs/
+tmp/
+cache/
+storage/
+*.log
+
+vendor/
+src~~~/
+
+# Ignore full webroot
+webroot/*
+
+# BUT allow css folder and index.php
+!webroot/css/
+!webroot/css/**
+!webroot/index.php
+
+# Ignore specific config files
+config/app.php
+config/bootstrap.php
+
+# Server specific
+.htaccess

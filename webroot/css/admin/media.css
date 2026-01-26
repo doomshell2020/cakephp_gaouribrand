@@ -1,0 +1,48 @@
+
+@media (max-width:767px) { 
+.logo_section img{text-align:center; margin:auto; display:block; margin-top:-35px; padding-top:10px;}
+.top_bar_section h1{padding-top:0px;}
+.top_bar_section{height:130px;}
+.bottom_bar_section{height:70px;}
+.name_content{font-size:12px; font-weight:bold;}
+.name_content_right{font-size:12px;}
+.bottom_bar_section h2{font-size:15px; line-height:24px;}
+.banner_image_section img{text-align:center; margin:auto; display:block;}
+
+.name_content{width:35%; float:left; margin-left:5%;}
+
+	}
+
+
+
+/* Small devices (tablets, up to 768px) */
+
+
+
+@media screen and (min-device-width: 768px) and (max-device-width: 1023px) { 
+.top_bar_section h1{font-size:18px;}
+.top_bar_section h2{font-size:12px;}
+.top_bar_section{height:100px;}
+.bottom_bar_section h2{font-size:12px;}
+.banner_image_section{text-align:center; margin:auto; display:block; margin-top:10px;}
+.carousel-inner > .item > a > img, .carousel-inner > .item > img, .img-responsive, .thumbnail a > img, .thumbnail > img{display:inline-block;}
+.name_content{font-size:14px;}
+.name_content_right{font-size:12px;}
+.name_content{width:35%; float:left; margin-left:5%;}
+
+}
+
+@media screen and (min-device-width: 1024px) and (max-device-width: 1279px) { 
+.name_content_right{font-size:12px;}
+.name_content{font-size:14px;}
+.bottom_bar_section h2{font-size:15px;}
+.banner_image_section img{text-align:center; margin:auto; display:block; margin-left:3%;}
+.name_content{width:35%; float:left; margin-left:5%;}
+
+
+}
+
+@media screen and (min-device-width: 1280px) and (max-device-width: 1365px) { 
+.banner_image_section img{text-align:center; margin:auto; display:block;}
+}
+
