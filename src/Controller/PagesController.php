@@ -84,4 +84,8 @@ class PagesController extends AppController
             }
         }
     }
+
+    public function makepayment(){
+
+    }
 }

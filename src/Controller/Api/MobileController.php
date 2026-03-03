@@ -393,7 +393,7 @@ class MobileController extends AppController
       $response = array();
       $response['success'] = true;
 
-      if ($verifiedUser->id == 131) {
+      if ($verifiedUser->id == 2760) {
         $verifiedUser['otp'] = 1234;
       } else {
         $verifiedUser['otp'] = rand(1001, 9999);
@@ -571,6 +571,7 @@ class MobileController extends AppController
       return $this->response;
     }
   }
+
   public function resendOtp()
   {
     $this->autoRender = false;
@@ -677,6 +678,7 @@ class MobileController extends AppController
     }
   }
 
+
   public function uploadToken2()
   {
     $this->autoRender = false;
@@ -728,6 +730,8 @@ class MobileController extends AppController
       return;
     }
   }
+
+
   function versioncheck()
   {
     $this->autoRender = false;
@@ -1157,7 +1161,20 @@ class MobileController extends AppController
     $service_area = $this->Servicearea->find()->where(['location_id' => $location_id])->first();
     $vendor_id = $service_area['vendor_id'];
 
+
+    if (empty($service_area)) {
+      $response['message'] = "चयनित स्थान पर प्रदर्शित करने के लिए कोई भी उत्पाद जोड़े नहीं गए हैं";
+      $response['product'] = null;
+      $this->response->type('application/json');
+      $this->response->body(json_encode($response));
+      return $this->response;
+    }
+
+
+
+
     $products = $this->Products->find()->where(['status' => 'Y', 'vendor_id' => $vendor_id])->order(['Products.id' => 'ASC'])->toarray();
+
 
     foreach ($products as $product) {
 
@@ -1336,91 +1353,6 @@ class MobileController extends AppController
     $this->autoRender = false;
   }
 
-  public function addToCart()
-  {
-    $this->loadModel('Servicearea');
-
-    if ($this->request->is(['post', 'put'])) {
-      $userdata['user_id'] = $this->userId()['id'];
-      $addon_id = $_POST["addonId"];
-      $is_cart_reset = $_POST["is_cart_reset"];
-
-
-      $response['is_alert'] = false;
-      //Lets check location is valid
-      $last_cart_location = $this->Carts->find()->where(['user_id' => $userdata['user_id']])->first();
-      if ($last_cart_location) {
-
-        if ($last_cart_location['location_id'] != $_POST["location_id"]) {
-          if ($is_cart_reset == "YES") {
-            $this->Carts->deleteAll(['Carts.user_id' => $userdata['user_id']]);
-          } else {
-            $response['success'] = true;
-            $response['is_alert'] = true;
-            $response['message'] = "क्या आप अपना कार्ट खाली करना चाहते हैं,क्योंकि आप की लोकेशन चेंज हुई है";
-            $this->response->type('application/json');
-            $this->response->body(json_encode($response));
-            return $this->response;
-          }
-        }
-      }
-
-      if ($this->request->is(['post', 'put'])) {
-        // $_POST["quantity"] = (($_POST["quantity"]) < 1) ? 1 : $_POST["quantity"];
-        $userdata['user_id'] = $this->userId()['id'];
-        $userdata['product_id'] = $_POST['productId'];
-        $userdata['quantity'] = $_POST["quantity"];
-        $userdata['location_id'] = $_POST["location_id"];
-
-        $user = $this->Users->find()->where(['id' => $userdata['user_id']])->first();
-        $cart_item_check = $this->Carts->find()->where(['user_id' => $userdata['user_id'], 'product_id' => $userdata['product_id'], 'product_addon_id' => $addon_id])->first();
-
-        if (count($cart_item_check) > 0) {
-          $data['quantity'] = ($userdata['quantity']) + $cart_item_check['quantity'];
-          if ($data['quantity'] <= 0) {
-            $this->Carts->deleteAll(['Carts.id' => $cart_item_check['id']]);
-            $response = array();
-            $response['success'] = true;
-            //  $response['message'] = "Your Item has been deleted Successfully";
-            $response['message'] = "आपका आइटम सफलतापूर्वक हटा दिया गया है";
-            $this->response->type('application/json');
-            $this->response->body(json_encode($response));
-            return $this->response;
-          }
-          $data["quantity"] = (($data["quantity"]) < 1) ? 1 : $data["quantity"];
-          $data['product_addon_id'] = $addon_id;
-          $quantity_savepack = $this->Carts->patchEntity($cart_item_check, $data);
-          $quantity_results = $this->Carts->save($quantity_savepack);
-
-          $response["success"] = true;
-          //  $response["message"] = "Item successfully added in cart";
-          $response["message"] = "आइटम सफलतापूर्वक कार्ट में जोड़ा गया";
-          $response["cartItemCount"] = $quantity_results['quantity'];
-          $this->response->type('application/json');
-          $this->response->body(json_encode($response));
-          return $this->response;
-        } else {
-          $userdata['product_addon_id'] = $addon_id;
-          $newpack = $this->Carts->newEntity();
-          $savepack = $this->Carts->patchEntity($newpack, $userdata);
-          $results = $this->Carts->save($savepack);
-
-          if ($results) {
-            $response["success"] = true;
-            // $response["message"] ="Your Cart updated Successfully";
-            $response["message"] = "आपका कार्ट सफलतापूर्वक अपडेट हो गया";
-            $response["cartItemCount"] = $results['quantity'];
-          }
-        }
-      } else {
-        $response["success"] = false;
-        $response["message"] = "Invalid method";
-      }
-      $this->response->type('application/json');
-      $this->response->body(json_encode($response));
-      return $this->response;
-    }
-  }
 
   public function slots()
   {
@@ -1590,6 +1522,7 @@ class MobileController extends AppController
     $this->loadModel('Users');
     $this->loadModel('Wallets');
     $userId = $this->userId()['id'];
+    // pr($userId); die;
     $user = $this->Users->find('all')->where(['id' => $userId, 'Users.status' => 1])->first();
     if (empty($user)) {
       $response = array();
@@ -1624,6 +1557,7 @@ class MobileController extends AppController
     echo json_encode($response);
     return;
   }
+
   public function userAddresses()
   {
     $this->loadModel('UserAddresses');
@@ -2150,12 +2084,101 @@ class MobileController extends AppController
     }
   }
 
+
+  public function addToCart()
+  {
+    $this->loadModel('Servicearea');
+
+    if ($this->request->is(['post', 'put'])) {
+      $userdata['user_id'] = $this->userId()['id'];
+      $addon_id = $_POST["addonId"];
+      $is_cart_reset = $_POST["is_cart_reset"];
+
+
+      $response['is_alert'] = false;
+      //Lets check location is valid
+      $last_cart_location = $this->Carts->find()->where(['user_id' => $userdata['user_id']])->first();
+      if ($last_cart_location) {
+
+        if ($last_cart_location['location_id'] != $_POST["location_id"]) {
+          if ($is_cart_reset == "YES") {
+            $this->Carts->deleteAll(['Carts.user_id' => $userdata['user_id']]);
+          } else {
+            $response['success'] = true;
+            $response['is_alert'] = true;
+            $response['message'] = "क्या आप अपना कार्ट खाली करना चाहते हैं,क्योंकि आप की लोकेशन चेंज हुई है";
+            $this->response->type('application/json');
+            $this->response->body(json_encode($response));
+            return $this->response;
+          }
+        }
+      }
+
+      if ($this->request->is(['post', 'put'])) {
+        // $_POST["quantity"] = (($_POST["quantity"]) < 1) ? 1 : $_POST["quantity"];
+        $userdata['user_id'] = $this->userId()['id'];
+        $userdata['product_id'] = $_POST['productId'];
+        $userdata['quantity'] = $_POST["quantity"];
+        $userdata['location_id'] = $_POST["location_id"];
+
+        $user = $this->Users->find()->where(['id' => $userdata['user_id']])->first();
+        $cart_item_check = $this->Carts->find()->where(['user_id' => $userdata['user_id'], 'product_id' => $userdata['product_id'], 'product_addon_id' => $addon_id])->first();
+
+        if (count($cart_item_check) > 0) {
+          $data['quantity'] = ($userdata['quantity']) + $cart_item_check['quantity'];
+          if ($data['quantity'] <= 0) {
+            $this->Carts->deleteAll(['Carts.id' => $cart_item_check['id']]);
+            $response = array();
+            $response['success'] = true;
+            //  $response['message'] = "Your Item has been deleted Successfully";
+            $response['message'] = "आपका आइटम सफलतापूर्वक हटा दिया गया है";
+            $this->response->type('application/json');
+            $this->response->body(json_encode($response));
+            return $this->response;
+          }
+          $data["quantity"] = (($data["quantity"]) < 1) ? 1 : $data["quantity"];
+          $data['product_addon_id'] = $addon_id;
+          $quantity_savepack = $this->Carts->patchEntity($cart_item_check, $data);
+          $quantity_results = $this->Carts->save($quantity_savepack);
+
+          $response["success"] = true;
+          //  $response["message"] = "Item successfully added in cart";
+          $response["message"] = "आइटम सफलतापूर्वक कार्ट में जोड़ा गया";
+          $response["cartItemCount"] = $quantity_results['quantity'];
+          $this->response->type('application/json');
+          $this->response->body(json_encode($response));
+          return $this->response;
+        } else {
+          $userdata['product_addon_id'] = $addon_id;
+          $newpack = $this->Carts->newEntity();
+          $savepack = $this->Carts->patchEntity($newpack, $userdata);
+          $results = $this->Carts->save($savepack);
+
+          if ($results) {
+            $response["success"] = true;
+            // $response["message"] ="Your Cart updated Successfully";
+            $response["message"] = "आपका कार्ट सफलतापूर्वक अपडेट हो गया";
+            $response["cartItemCount"] = $results['quantity'];
+          }
+        }
+      } else {
+        $response["success"] = false;
+        $response["message"] = "Invalid method";
+      }
+      $this->response->type('application/json');
+      $this->response->body(json_encode($response));
+      return $this->response;
+    }
+  }
+
+
   public function orderCart()
   {
 
     $uid = $this->userId()['id'];
     // pr($uid);exit;
     $this->loadModel('UserAddresses');
+    $this->loadModel('ProductAddons');
     $this->loadModel('Servicearea');
     $this->loadModel('Users');
     $this->loadModel('Carts');
@@ -2170,13 +2193,16 @@ class MobileController extends AppController
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
       $response = array();
       $wallet = $this->request->data['wallet'];
 
 
       // pr($uid);exit;
-      $result = $this->Carts->find()->contain(['Products', 'ProductAddons'])->where(['user_id' => $uid])->toarray();
-      // pr($result); die;
+      $result = $this->Carts->find()->contain(['Products', 'ProductAddons'])->where(['Carts.user_id' => $uid])->toarray();
+
+
+
       $product = array();
       if (count($result) > 0) {
         $total_amount = 0;
@@ -2191,10 +2217,12 @@ class MobileController extends AppController
           $total_amount += number_format((float) $res['product_addon']['price'], 2, '.', '') * $res['quantity'];
           $total_quantity += $res['quantity'];
         }
+
         $coupons = $this->Coupons->find()->where(['code' => $coupon])->first();
 
 
         $total_amount = $total_amount - $wallet;
+        //  pr($total_amount); die;
         // $locality = "Parasrampura";
         $loca = $this->Locations->find()->where(['id' => $res['location_id']])->first();
         $locality = $loca['name'];
@@ -2214,10 +2242,12 @@ class MobileController extends AppController
         $latitude = $this->request->data['latitude'];
         $longitude = $this->request->data['longitude'];
 
+
         $response_location_track = \GeometryLibrary\PolyUtil::containsLocation(
           ['lat' => $latitude, 'lng' => $longitude],
           $serviceArea
         );
+
         if (empty($response_location_track)) {
           $response['success'] = false;
           $response['message'] = "चयनित स्थान और पता मेल नहीं खाता.";
@@ -2320,6 +2350,7 @@ class MobileController extends AppController
           }
         }
 
+
         if ($this->request->data['paymentMode'] == "COD") {
           $this->Carts->deleteAll(['user_id' => $uid]);
           $response["success"] = true;
@@ -2331,19 +2362,27 @@ class MobileController extends AppController
           echo json_encode(($response));
           die;
         } else {
+
+
           $orderId = $order_result['id'];
           $api = new Api(RAZOR_API_KEY, RAZOR_API_SECRET);
+
+
           $razorPayorder = $api->order->create(
             array(
-              'receipt' => $orderId,
-              'amount' => $order_result->total_amount * 100,
+              'receipt' => (string) $orderId,
+              'amount' => (string) $order_result->total_amount * 100,
               'payment_capture' => 1,
               'currency' => 'INR',
+              // 'verify' => false,
             )
           );
+
+
           $order_result['razorpay_order_id'] = $razorPayorder->id;
           $order_result['payment_status'] = 'pending';
-          //pr($newOrder); die;
+          // pr($order_result); die;
+
           $this->Orders->save($order_result);
 
           $response['success'] = true;

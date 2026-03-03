@@ -33,9 +33,12 @@ class Firebase {
             'Authorization: key=' .FIREBASE_API_KEY,
             'Content-Type: application/json'
         );
+        // pr(FIREBASE_API_KEY); die;
 	
         //Initializing curl to open a connection
         $ch = curl_init();
+        // pr($ch); die;
+
  
         //Setting the curl url
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -56,7 +59,7 @@ class Firebase {
  
         //finally executing the curl request 
         $result = curl_exec($ch);
-        //  pr($result);exit;
+
 
         if ($result === FALSE) {
             die('Curl failed: ' . curl_error($ch));

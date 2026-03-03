@@ -53,7 +53,7 @@
                                 <input class="span2 form-control" placeholder="Billing Address" title="Billing Address"
                                     id="address" type="text" name="address" required>
                             </div>
-                             <div class="col-sm-3">
+                            <div class="col-sm-3">
                                 <label for="inputEmail3" class="control-label">Village<strong
                                         style="color:red;">*</strong></label>
                                 <input class="span2 form-control" placeholder="Village" title="Village"
@@ -74,7 +74,7 @@
                                 <label for="inputEmail3" class="control-label">Vendor<strong
                                         style="color:red;">*</strong></label>
                                 <?php
-                                echo $this->Form->input('vendor', array('class' => 'form-control', 'required', 'id' => 'vendor_id', 'label' => false, 'options' => $Vendor,'autofocus')); ?>
+                                echo $this->Form->input('vendor', array('class' => 'form-control', 'required', 'id' => 'vendor_id', 'label' => false, 'options' => $Vendor, 'autofocus')); ?>
                             </div>
 
                             <script>
@@ -83,6 +83,13 @@
                                     return pattern.test(e.key)
                                 }
                             </script>
+
+                            <div class="col-sm-3" style="display: none;" id="referresdby">
+                                <label for="inputEmail3" class="control-label">Referred By<strong
+                                        style="color:red;">*</strong></label>
+                                <input type="text" name="referred_by" class="form-control">
+
+                            </div>
 
                             <div class="col-sm-3">
                                 <a href="#" class="btn btn-success" style="margin-right: 3px;margin-top: 26px;"
@@ -150,7 +157,7 @@
 </div>
 <?php $count = 1; ?>
 <script>
-    $("#mobileNo").change(function () {
+    $("#mobileNo").change(function() {
         var mobile = $('#mobileNo').val();
         if (mobile != "") {
             $.ajax({
@@ -160,19 +167,23 @@
                     'mobile': mobile
                 },
                 cache: false,
-                success: function (response) {
+                success: function(response) {
                     if (response != 'null') {
+
                         var data = JSON.parse(response);
                         $('#name').val(data.name).prop('readonly', true);
                         $('#address').val(data.address).prop('readonly', true);
                         $('#villagename').val(data.villagename).prop('readonly', true);
                         $('#location').val(data.location_id).prop('disabled', true);
                         $('#vendor_id').val(data.vendor_id);
+                        $('#referresdby').val('').css('display', 'none');
+
                     } else {
                         $('#name').val('').prop('readonly', false);
                         $('#address').val('').prop('readonly', false);
                         $('#villagename').val('').prop('readonly', false);
                         $('#location').val('').prop('disabled', false);
+                        $('#referresdby').val('').css('display', 'block');
                         // $('#vendor_id').val('').prop('disabled', false);
                     }
                 }
@@ -185,7 +196,7 @@
 <script>
     var count = <?php echo $count; ?>;
 
-    $("#addRow").click(function () {
+    $("#addRow").click(function() {
         var vendorId = $('#vendor_id').val();
         if (vendorId != "") {
             $.ajax({
@@ -196,7 +207,7 @@
                 },
                 cache: false,
 
-                success: function (response) {
+                success: function(response) {
                     try {
                         $('.item-row').css('display', 'block');
 
@@ -212,7 +223,7 @@
                                 .prop('required', true)
                                 .addClass('form-control product');
                             productNameInput.append($('<option>').attr('value', '').text('-- Select Product --'));
-                            jsonArray.forEach(function (item) {
+                            jsonArray.forEach(function(item) {
                                 var option = $('<option>')
                                     .attr('value', item.id)
                                     .text(item.name);
@@ -285,7 +296,7 @@
     });
 
 
-    $(document).on('click', '.delete', function () {
+    $(document).on('click', '.delete', function() {
         var idParts = $(this).attr('id').split('-');
         var count1 = idParts[1];
         $('.row-' + count1).remove();
@@ -293,7 +304,7 @@
         count--;
     });
 
-    $('#orderForm').on('submit', function () {
+    $('#orderForm').on('submit', function() {
 
         if (count == 1 || count < 1) {
             alert('Atleast add one product');
@@ -307,7 +318,7 @@
 </script>
 
 <script>
-    $(document).on('change', '.product', function () {
+    $(document).on('change', '.product', function() {
         var idParts = $(this).attr('id').split('-');
         var count = idParts[1];
         var productId = $('#product-' + count).val();
@@ -320,13 +331,13 @@
                     'product_id': productId,
                 },
                 cache: false,
-                success: function (response) {
+                success: function(response) {
                     var jsonArray = JSON.parse(response);
                     var price = quantity * jsonArray.price;
                     $('#price-' + count).val(price);
                     var select = $("#unit-" + count);
                     select.empty();
-                    jsonArray.unit.forEach(function (unit) {
+                    jsonArray.unit.forEach(function(unit) {
                         select.append($('<option>', {
                             value: unit,
                             text: unit
@@ -341,21 +352,21 @@
 <script>
     function totalsAmount() {
         let totalAmount = 0;
-        $('.price').each(function () {
+        $('.price').each(function() {
             totalAmount += parseFloat($(this).val()) || 0;
         });
         var discount = $('#discount').val();
         acutalAmount = totalAmount - discount;
-        if(acutalAmount < 0){
+        if (acutalAmount < 0) {
             $('#total').val(0);
             $('#discount').val(0);
-        }else{
+        } else {
             $('#total').val(acutalAmount);
         }
     }
 </script>
 <script>
-    $(document).on('change', '.unit', function () {
+    $(document).on('change', '.unit', function() {
         var idParts = $(this).attr('id').split('-');
         var productId = idParts[0];
         var count = idParts[1];
@@ -371,7 +382,7 @@
                     'unitQty': unitQty
                 },
                 cache: false,
-                success: function (response) {
+                success: function(response) {
                     var price = quantity * response;
                     $('#price-' + count).val(price);
                     totalsAmount();
@@ -381,7 +392,7 @@
     });
 </script>
 <script>
-    $(document).on('input', '.quantity', function () {
+    $(document).on('input', '.quantity', function() {
         var idParts = $(this).attr('id').split('-');
         var count = idParts[1];
         var quantity = $(this).val();
@@ -396,7 +407,7 @@
                     'unitQty': unitQty
                 },
                 cache: false,
-                success: function (response) {
+                success: function(response) {
                     var price = quantity * response;
                     $('#price-' + count).val(price);
                     totalsAmount();
@@ -406,18 +417,18 @@
     });
 </script>
 <script>
-    $(document).on('input', '#discount', function () {
+    $(document).on('input', '#discount', function() {
         let totalAmount = 0;
-        $('.price').each(function () {
+        $('.price').each(function() {
             totalAmount += parseFloat($(this).val()) || 0;
         });
         var discount = $('#discount').val();
         acutalAmount = totalAmount - discount;
-        if(acutalAmount < 0){
+        if (acutalAmount < 0) {
             alert('Amount can not be less then 0');
             $('#total').val(0);
             $('#discount').val(0);
-        }else{
+        } else {
             $('#total').val(acutalAmount);
         }
     });

@@ -280,7 +280,7 @@ class OrderController extends AppController
             ->contain(['Users', 'OrderDetails'])
             ->order(['Orders.id' => 'DESC'])
             ->enableHydration(false)
-            ->bufferResults(false); 
+            ->bufferResults(false);
 
         if ($where) {
             $query->where($where);
@@ -311,7 +311,7 @@ class OrderController extends AppController
             }
 
             foreach ($rows as $r) {
-                yield $r; 
+                yield $r;
             }
 
             $offset += $chunkSize;
@@ -347,6 +347,12 @@ class OrderController extends AppController
                 $data['location_id'] = $this->request->data['location'];
                 $data['animalCount'] = 1;
                 $data['milkQuantity'] = '1';
+                $data['referral_code'] = random_int(100000, 999999);
+                if (!empty($this->request->data['referred_by'])) {
+                    $checkreferral = $this->checkreferralcode($this->request->data['referred_by']);
+                    $data['referred_user_id'] = $checkreferral['id'];
+                }
+
                 $userdetail = $this->Users->patchEntity($conts, $data);
                 $result1 = $this->Users->save($userdetail);
 
@@ -409,6 +415,16 @@ class OrderController extends AppController
             }
             $this->Flash->success(__('Order added successfully.'));
             return $this->redirect(['action' => 'index']);
+        }
+    }
+
+    // for check existing referal code
+    public function checkreferralcode($referal_code_data)
+    {
+        $this->autoRender = false;
+        $referreduser = $this->Users->find()->where(['referral_code' => $referal_code_data, 'status' => '1'])->first();
+        if (!empty($referreduser)) {
+            return $referreduser;
         }
     }
 
@@ -490,5 +506,33 @@ class OrderController extends AppController
         $response = $ProductAddons->price;
         echo json_encode($response);
         return;
+    }
+
+    public function updatereferralcode()
+    {
+
+        $this->loadModel('Users');
+
+        $checkuser = $this->Users->find('all')->where(['Users.referral_code IS NULL'])->toarray();
+
+        foreach ($checkuser as $user) {
+
+            do {
+                // Generate 6 digit random code
+                $referralCode = random_int(100000, 999999);
+
+                // Check duplicate in DB
+                $exists = $this->Users->find()
+                    ->where(['referral_code' => $referralCode])
+                    ->count();
+            } while ($exists > 0); // repeat until unique code found
+
+            // Assign & save
+            $user->referral_code = $referralCode;
+            $this->Users->save($user);
+        }
+
+        echo "Referral codes updated successfully";
+        die;
     }
 }

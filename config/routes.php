@@ -69,6 +69,7 @@ Router::scope('/', function (RouteBuilder $routes) {
     Router::connect('/privacy', array('controller' => 'pages', 'action' =>'privacy'));
     Router::connect('/refund', array('controller' => 'pages', 'action' =>'refund'));
     Router::connect('/contactus', array('controller' => 'pages', 'action' =>'contactUs'));
+    Router::connect('/makepayment', array('controller' => 'pages', 'action' =>'makepayment'));
 
     // Router::connect('/products', array('controller' => 'pages', 'action' =>'products'));
     // Router::connect('/aboutUs', array('controller' => 'pages', 'action' =>'aboutUs'));

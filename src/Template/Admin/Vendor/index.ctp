@@ -97,7 +97,7 @@
                   if (isset($users) && !empty($users)) {
                     foreach ($users as $users) { //pr($users);die;
                       $get_location_name = $this->Comman->getlocationname($users['id']);
-                      // pr($get_location_name);
+                 
                   ?>
                       <tr>
                         <td><?php echo $counter + 1; ?></td>
@@ -106,25 +106,36 @@
 
                         <td><?php echo $users['mobile'];  ?></td>
                         <td><?php echo strip_tags($users['address']);  ?></td>
-                        <!-- <td><?php //echo $users['animalCount'];  ?></td>
-                        <td><?php //echo $users['milkQuantity'];  ?></td> -->
+                        <!-- <td><?php //echo $users['animalCount'];  
+                                  ?></td>
+                        <td><?php //echo $users['milkQuantity'];  
+                            ?></td> -->
                         <td><?php echo date('d-m-Y', strtotime($users['created'])); ?></td>
                         <td style="color: #0125ea;">
-                          <?php if ($get_location_name) { ?>
-                            <a href="<?php echo ADMIN_URL; ?>servicearea/servicearea/<?php echo $get_location_name['id']; ?>" data-toggle="modal" class="documentcls" title="View Order Detail"><?php echo $get_location_name['name']; ?></a>
-                          <?php } else {
-                            echo "--";
-                          } ?></td>
-
+                          <?php
+                          if (!empty($get_location_name)) {
+                            $links = [];
+                            foreach ($get_location_name as $location) {
+                              $links[] = '<a href="' . ADMIN_URL . 'servicearea/servicearea/' . $location->id . '" class="documentcls">' . $location->name . '</a>';
+                            }
+                            echo implode(', ', $links);
+                          } else {
+                            echo '--';
+                          }
+                          ?>
+                        </td>
                         <td>
                           <?php if ($users['status'] == '1') {
                             echo $this->Html->link('', [
                               'action' => 'status',
-                              $users->id, '0'
+                              $users->id,
+                              '0'
                             ], ['title' => 'Active', 'class' => 'fa fa-check-circle', 'style' => 'font-size: 21px !important; margin-left: 12px;     color: #36cb3c;']);
                           } else {
                             echo $this->Html->link('', [
-                              'action' => 'status', $users->id, '1'
+                              'action' => 'status',
+                              $users->id,
+                              '1'
                             ], ['title' => 'Inactive', 'class' => 'fa fa-times-circle-o', 'style' => 'font-size: 21px !important; margin-left: 12px; color:#FF5722;']);
                           } ?>
                           <?php echo $this->Html->link(__(''), ['action' => 'vendoredit', $users->id], array('class' => 'fa fa-pencil-square-o fa-lg', 'title' => 'Edit', 'style' => 'font-size: 20px !important; margin-left: 12px;')) ?>

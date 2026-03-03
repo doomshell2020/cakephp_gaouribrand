@@ -36,59 +36,296 @@ class CustomerController extends AppController
 		return $this->redirect('/logins');
 	}
 
+	// public function index()
+	// {
+	// 	$this->loadModel('Orders');
+
+	// 	$this->viewBuilder()->layout('admin');
+
+	// 	$locations = $this->Locations->find('list', ['keyField' => 'id', 'valueField' => 'name'])->toarray();
+	// 	$this->set(compact('locations'));
+
+	// 	$req_data = $_GET;
+
+
+	// 	$name = $req_data['name'];
+	// 	$mobile = $req_data['mobile'];
+	// 	$referral_code = $req_data['referral_code'];
+	// 	$from_date = $req_data['from_date'];
+	// 	$to_date = $req_data['to_date'];
+	// 	$location = $req_data['location'];
+	// 	$top_customer_basedon_order = $req_data['top_customer_basedon_order'];
+	// 	$by_name = $req_data['by_name'];
+	// 	$by_date = $req_data['by_date'];
+	// 	$data = $this->Users->find('all')->where(['Users.role_id' => '3', 'Users.referral_code' => $referral_code])->order(['Users.id' => 'DESC'])->first();
+	// 	$user_data = $data['id'];
+
+
+
+	// 	$cond = [];
+	// 	if (isset($name) && $name != '') {
+	// 		$cond['Users.name LIKE'] = '%' . trim($name) . '%';
+	// 	}
+	// 	if (isset($location) && $location != '') {
+	// 		$cond['Users.location_id'] = $location;
+	// 	}
+
+	// 	if (isset($mobile) && $mobile != '') {
+	// 		$cond['Users.mobile LIKE'] = '%' . trim($mobile) . '%';
+	// 	}
+
+	// 	if (isset($user_data) && $user_data != '') {
+	// 		$cond['Users.referred_user_id '] = trim($user_data);
+	// 	}
+
+	// 	if (isset($from_date) && $from_date != '') {
+	// 		$cond['DATE(Users.created) >='] = $from_date;
+	// 	}
+
+	// 	if (isset($to_date) && $to_date != '') {
+	// 		$cond['DATE(Users.created) <='] = $to_date;
+	// 	}
+
+	// 	if (!empty($top_customer_basedon_order)) {
+	// 		$sortOrder = ['total_amount' => 'DESC'];
+	// 	}
+	// 	if (!empty($by_name)) {
+	// 		$sortOrder = [trim('Users.name') => 'ASC'];
+	// 	}
+	// 	if (!empty($by_date)) {
+	// 		$sortOrder = ['order_date' => 'DESC'];
+	// 	}
+
+	// 	pr($cond);
+	// 	pr($sortOrder);
+
+	// 	if (!empty($cond) || $sortOrder) {
+	// 		$user_data = $this->request->session()->read('Auth.User');
+	// 		if ($user_data['role_id'] == 2) {
+	// 			$usersTable = TableRegistry::getTableLocator()->get('Users');
+	// 			$query = $usersTable->find('all');
+	// 			$users = $query->select([
+	// 				'id' => 'Users.id',
+	// 				'name' => 'Users.name',
+	// 				'mobile' => 'Users.mobile',
+	// 				'referral_code' => 'Users.referral_code',
+	// 				'villagename' => 'Users.villagename',
+	// 				'animalCount' => 'Users.animalCount',
+	// 				'milkQuantity' => 'Users.milkQuantity',
+	// 				'referred_user_id' => 'Users.referred_user_id',
+	// 				'created' => 'Users.created',
+	// 				'user_id' => 'Users.id',
+	// 				'vendor_id' => 'Orders.vendor_id',
+	// 				'total_amount' => $query->func()->sum('Orders.total_amount'),
+	// 				'order_date' => $query->func()->max('Orders.order_date')
+	// 			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3, 'Orders.vendor_id' => $user_data['id'], $cond])->group('Users.id')->order($sortOrder);
+	// 			$users_data = $this->paginate($users)->toArray();
+	// 		} else {
+	// 			$usersTable = TableRegistry::getTableLocator()->get('Users');
+	// 			$query = $usersTable->find('all');
+	// 			$users = $query->select([
+	// 				'id' => 'Users.id',
+	// 				'name' => 'Users.name',
+	// 				'mobile' => 'Users.mobile',
+	// 				'referral_code' => 'Users.referral_code',
+	// 				'villagename' => 'Users.villagename',
+	// 				'animalCount' => 'Users.animalCount',
+	// 				'milkQuantity' => 'Users.milkQuantity',
+	// 				'referred_user_id' => 'Users.referred_user_id',
+	// 				'created' => 'Users.created',
+	// 				'user_id' => 'Users.id',
+	// 				'total_amount' => $query->func()->sum('Orders.total_amount'),
+	// 				'order_date' => $query->func()->max('Orders.order_date')
+	// 			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3], $cond)->group('Users.id')->order($sortOrder);
+	// 			$users_data = $this->paginate($users)->toArray();
+	// 		}
+	// 	} else {
+
+
+	// 		$user_data = $this->request->session()->read('Auth.User');
+	// 		if ($user_data['role_id'] == 2) {
+	// 			$usersTable = TableRegistry::getTableLocator()->get('Users');
+	// 			$query = $usersTable->find('all');
+	// 			$users = $query->select([
+	// 				'id' => 'Users.id',
+	// 				'name' => 'Users.name',
+	// 				'mobile' => 'Users.mobile',
+	// 				'referral_code' => 'Users.referral_code',
+	// 				'villagename' => 'Users.villagename',
+	// 				'animalCount' => 'Users.animalCount',
+	// 				'milkQuantity' => 'Users.milkQuantity',
+	// 				'referred_user_id' => 'Users.referred_user_id',
+	// 				'created' => 'Users.created',
+	// 				'user_id' => 'Users.id',
+	// 				'vendor_id' => 'Orders.vendor_id',
+	// 				'total_amount' => $query->func()->sum('Orders.total_amount'),
+	// 				'order_date' => $query->func()->max('Orders.order_date')
+	// 			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3, 'Orders.vendor_id' => $user_data['id']])->group('Users.id')->order(['order_date' => 'DESC']);
+	// 			$users_data = $this->paginate($users)->toArray();
+	// 		} else {
+	// 			$usersTable = TableRegistry::getTableLocator()->get('Users');
+	// 			$query = $usersTable->find('all');
+	// 			$users = $query->select([
+	// 				'id' => 'Users.id',
+	// 				'name' => 'Users.name',
+	// 				'mobile' => 'Users.mobile',
+	// 				'referral_code' => 'Users.referral_code',
+	// 				'villagename' => 'Users.villagename',
+	// 				'animalCount' => 'Users.animalCount',
+	// 				'milkQuantity' => 'Users.milkQuantity',
+	// 				'referred_user_id' => 'Users.referred_user_id',
+	// 				'created' => 'Users.created',
+	// 				'user_id' => 'Users.id',
+	// 				'total_amount' => $query->func()->sum('Orders.total_amount'),
+	// 				'order_date' => $query->func()->max('Orders.order_date')
+	// 			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3])->group('Users.id')->order(['order_date' => 'DESC']);
+	// 			$users_data = $this->paginate($users)->toArray();
+	// 		}
+	// 	}
+	// 	$this->set('users', $users_data);
+
+	// 	// pr($req_data); 
+	// }
+
 	public function index()
 	{
-		$this->loadModel('Orders');
 
+		$this->loadModel('Orders');
 		$this->viewBuilder()->layout('admin');
 
-		$locations = $this->Locations->find('list', ['keyField' => 'id', 'valueField' => 'name'])->toarray();
+		/* Locations */
+		$locations = $this->Locations
+			->find('list', ['keyField' => 'id', 'valueField' => 'name'])
+			->toArray();
 		$this->set(compact('locations'));
-		
 
-		$req_data = $this->request->session()->read('req_data');
-		$this->set('users', $users_data);
+		/* Request Data */
+		$req_data = $this->request->getQuery();
 
-		$user_data = $this->request->session()->read('Auth.User');
-		if ($user_data['role_id'] == 2) {
-			$usersTable = TableRegistry::getTableLocator()->get('Users');
-			$query = $usersTable->find('all');
-			$users = $query->select([
-				'id' => 'Users.id',
-				'name' => 'Users.name',
-				'mobile' => 'Users.mobile',
-				'referral_code' => 'Users.referral_code',
-				'villagename' => 'Users.villagename',
-				'animalCount' => 'Users.animalCount',
-				'milkQuantity' => 'Users.milkQuantity',
-				'referred_user_id' => 'Users.referred_user_id',
-				'created' => 'Users.created',
-				'user_id' => 'Users.id',
-				'vendor_id' => 'Orders.vendor_id',
-				'order_total' => $query->func()->sum('Orders.total_amount')
-			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3, 'Orders.vendor_id' => $user_data['id']])->group('Users.id')->order(['order_total' => 'DESC']);
-			$users_data = $this->paginate($users)->toArray();
-		} else {
-			$usersTable = TableRegistry::getTableLocator()->get('Users');
-			$query = $usersTable->find('all');
-			$users = $query->select([
-				'id' => 'Users.id',
-				'name' => 'Users.name',
-				'mobile' => 'Users.mobile',
-				'referral_code' => 'Users.referral_code',
-				'villagename' => 'Users.villagename',
-				'animalCount' => 'Users.animalCount',
-				'milkQuantity' => 'Users.milkQuantity',
-				'referred_user_id' => 'Users.referred_user_id',
-				'created' => 'Users.created',
-				'user_id' => 'Users.id',
-				'order_total' => $query->func()->sum('Orders.total_amount')
-			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3])->group('Users.id')->order(['order_total' => 'DESC']);
-			$users_data = $this->paginate($users)->toArray();
+		$name        = $req_data['name'] ?? '';
+		$mobile      = $req_data['mobile'] ?? '';
+		$referral_code = $req_data['referral_code'] ?? '';
+		$from_date   = $req_data['from_date'] ?? '';
+		$to_date     = $req_data['to_date'] ?? '';
+		$location    = $req_data['location'] ?? '';
+		$top_customer_basedon_order = $req_data['top_customer_basedon_order'] ?? '';
+		$by_name     = $req_data['by_name'] ?? '';
+		$by_date     = $req_data['by_date'] ?? '';
+
+		/* Referral User */
+		$data = $this->Users->find()
+			->where([
+				'Users.role_id' => 3,
+				'Users.referral_code' => $referral_code
+			])
+			->order(['Users.id' => 'DESC'])
+			->first();
+
+		$user_data_id = $data['id'] ?? '';
+
+		/* Conditions */
+		$cond = [];
+
+		if ($name !== '') {
+			$cond['Users.name LIKE'] = '%' . trim($name) . '%';
 		}
-		$this->set('users', $users_data);
-		// pr($results); die;
+
+		if ($location !== '') {
+			$cond['Users.location_id'] = $location;
+		}
+
+		if ($mobile !== '') {
+			$cond['Users.mobile LIKE'] = '%' . trim($mobile) . '%';
+		}
+
+		if ($user_data_id !== '') {
+			$cond['Users.referred_user_id'] = trim($user_data_id);
+		}
+
+		if ($from_date !== '') {
+			$cond['DATE(Users.created) >='] = $from_date;
+		}
+
+		if ($to_date !== '') {
+			$cond['DATE(Users.created) <='] = $to_date;
+		}
+
+		$cond['Orders.order_status '] = "Delivered";
+
+
+		/* Sorting */
+		$sortOrder = [];
+
+		if (!empty($top_customer_basedon_order)) {
+			$sortOrder = [
+				'total_amount' => 'DESC'
+			];
+		}
+		if (!empty($by_name)) {
+			$sortOrder = ['Users.name' => 'ASC'];
+		}
+
+		if (!empty($by_date)) {
+			$sortOrder = ['order_date' => 'DESC'];
+		}
+
+
+		/* Logged in User */
+		$authUser = $this->request->getSession()->read('Auth.User');
+		$usersTable = TableRegistry::getTableLocator()->get('Users');
+		$query = $usersTable->find();
+
+		/* Base Select */
+		$select = [
+			'id' => 'Users.id',
+			'name' => 'Users.name',
+			'mobile' => 'Users.mobile',
+			'referral_code' => 'Users.referral_code',
+			'villagename' => 'Users.villagename',
+			'animalCount' => 'Users.animalCount',
+			'milkQuantity' => 'Users.milkQuantity',
+			'referred_user_id' => 'Users.referred_user_id',
+			'created' => 'Users.created',
+			'user_id' => 'Users.id',
+			'total_amount' => $query->func()->sum('Orders.total_amount'),
+			'order_date' => $query->func()->max('Orders.order_date'),
+			'total_orders' => $query->func()->count('Orders.id')
+		];
+
+		$query->select($select)
+			->join([
+				'Orders' => [
+					'table' => 'orders',
+					'type' => 'LEFT',
+					'conditions' => ['Orders.user_id = Users.id']
+				]
+			])
+			->where(['Users.role_id' => 3])
+			->group('Users.id');
+
+		/* Vendor Restriction */
+		if ($authUser['role_id'] == 2) {
+			$query->where(['Orders.vendor_id' => $authUser['id']]);
+		}
+
+		/* Search Conditions */
+		if (!empty($cond)) {
+			$query->where($cond);
+		}
+
+		/* Sorting */
+		if (!empty($sortOrder)) {
+			$query->order($sortOrder);
+		} else {
+			$query->order(['order_date' => 'DESC']);
+		}
+
+		/* Pagination */
+		$users = $this->paginate($query)->toArray();
+		$this->set(compact('users'));
 	}
+
+
 
 	public function search()
 	{
@@ -103,11 +340,18 @@ class CustomerController extends AppController
 		$from_date = $req_datas['from_date'];
 		$to_date = $req_datas['to_date'];
 		$location = $req_datas['location'];
+		$top_customer_basedon_order = $req_datas['top_customer_basedon_order'];
+		$by_name = $req_datas['by_name'];
+		$by_date = $req_datas['by_date'];
 		$data = $this->Users->find('all')->where(['Users.role_id' => '3', 'Users.referral_code' => $referral_code])->order(['Users.id' => 'DESC'])->first();
 		$user_data = $data['id'];
 		$session = $this->request->session();
 		$session->delete('cond');
+
 		$cond = [];
+
+		$sortOrder = [];
+
 		if (isset($name) && $name != '') {
 			$cond['Users.name LIKE'] = '%' . trim($name) . '%';
 		}
@@ -124,12 +368,46 @@ class CustomerController extends AppController
 		}
 
 		if (isset($from_date) && $from_date != '') {
-			$cond['DATE(Users.created) >='] = $from_date;
+			$cond['DATE(order_date) >='] = $from_date;
 		}
 
 		if (isset($to_date) && $to_date != '') {
-			$cond['DATE(Users.created) <='] = $to_date;
+			$cond['DATE(order_date) <='] = $to_date;
 		}
+
+		$cond['Orders.order_status '] = "Delivered";
+
+
+		/* ---------------- SORT ---------------- */
+		$sortOrder = ['total_orders' => 'DESC']; // default
+
+		if (!empty($top_customer_basedon_order)) {
+			$sortOrder = [
+				'total_amount' => 'DESC'
+			];
+		}
+		if (!empty($by_name)) {
+			$sortOrder = [trim('Users.name') => 'ASC'];
+		}
+		if (!empty($by_date)) {
+			$sortOrder = ['order_date' => 'DESC'];
+		}
+
+		if (!empty($top_customer_basedon_order)) {
+
+			// TOP CUSTOMER → highest priority
+			$sortOrder = [
+				'total_amount' => 'DESC'
+			];
+		} elseif (!empty($by_name)) {
+
+			$sortOrder = ['Users.name' => 'ASC'];
+		} elseif (!empty($last_order_date)) {
+
+			$sortOrder = ['last_order_date' => 'DESC'];
+		}
+
+
 		$this->request->session()->write('cond', $cond);
 
 		$user_data = $this->request->session()->read('Auth.User');
@@ -148,8 +426,11 @@ class CustomerController extends AppController
 				'created' => 'Users.created',
 				'user_id' => 'Users.id',
 				'vendor_id' => 'Orders.vendor_id',
-				'order_total' => $query->func()->sum('Orders.total_amount')
-			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3, 'Orders.vendor_id' => $user_data['id'], $cond])->group('Users.id')->order(['order_total' => 'DESC']);
+				'order_status' => 'Orders.order_status',
+				'total_amount' => $query->func()->sum('Orders.total_amount'),
+				'order_date' => $query->func()->max('Orders.order_date'),
+				'total_orders' => $query->func()->count('Orders.id'),
+			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3, 'Orders.vendor_id' => $user_data['id'], $cond])->group('Users.id')->order(['total_amount' => 'DESC']);
 			$users_data = $this->paginate($users)->toArray();
 		} else {
 			$usersTable = TableRegistry::getTableLocator()->get('Users');
@@ -166,13 +447,19 @@ class CustomerController extends AppController
 				'referred_user_id' => 'Users.referred_user_id',
 				'created' => 'Users.created',
 				'user_id' => 'Users.id',
-				'order_total' => $query->func()->sum('Orders.total_amount')
-			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3, $cond])->group('Users.id')->order(['order_total' => 'DESC']);
+				'order_status' => 'Orders.order_status',
+				'total_amount' => $query->func()->sum('Orders.total_amount'),
+				'order_date' => $query->func()->max('Orders.order_date'),
+				'total_orders' => $query->func()->count('Orders.id')
+			])->join(['Orders' => ['table' => 'orders', 'type' => 'LEFT', 'conditions' => ['Orders.user_id = Users.id']]])->where(['Users.role_id' => 3, $cond])->group('Users.id')->order($sortOrder);
+
 			$users_data = $this->paginate($users)->toArray();
-			// pr($users_data);exit;
 		}
 		$this->set('users', $users_data);
 	}
+
+
+
 
 	public function status($id, $status)
 	{
@@ -291,18 +578,68 @@ class CustomerController extends AppController
 	}
 
 	//Export Customer Manager
+	// public function customerexcel()
+	// {
+	// 	$where = $this->request->session()->read('cond');
+
+	// 	if (isset($where)) {
+
+	// 		$data = $this->Users->find('all')->where(['role_id' => 3, $where])->order(['Users.id' => 'DESC'])->toarray();
+	// 		$this->set('data', $data);
+	// 		$this->request->session()->delete('cond');
+	// 	} else {
+	// 		$data = $this->Users->find('all')->where(['role_id' => 3])->order(['Users.id' => 'DESC'])->toarray();
+	// 		$this->set('data', $data);
+	// 	}
+	// }
+
 	public function customerexcel()
 	{
 		$where = $this->request->session()->read('cond');
-		if (isset($where)) {
-			$data = $this->Users->find('all')->where(['role_id' => 3, $where])->order(['Users.id' => 'DESC'])->toarray();
-			$this->set('data', $data);
-			$this->request->session()->delete('cond');
-		} else {
-			$data = $this->Users->find('all')->where(['role_id' => 3])->order(['Users.id' => 'DESC'])->toarray();
-			$this->set('data', $data);
+
+
+		if (!empty($where)) {
+
+			$isDelivered =
+				(isset($where['Orders.order_status']) && $where['Orders.order_status'] === 'Delivered') ||
+				(isset($where['Orders.order_status ']) && $where['Orders.order_status '] === 'Delivered');
+
+			if ($isDelivered) {
+
+				// remove order_status
+				unset($where['Orders.order_status'], $where['Orders.order_status ']);
+
+				// remove date filters
+				unset(
+					$where['DATE(order_date) >='],
+					$where['DATE(order_date) <=']
+				);
+			}
 		}
+
+
+
+		if (!empty($where)) {
+			$data = $this->Users->find('all')
+				->where(['role_id' => 3])
+				->where($where)
+				->order(['Users.id' => 'DESC'])
+				->toArray();
+		} else {
+			$data = $this->Users->find('all')
+				->where(['role_id' => 3])
+				->order(['Users.id' => 'DESC'])
+				->toArray();
+		}
+
+		$this->set('data', $data);
+		$this->request->session()->delete('cond');
 	}
+
+
+
+
+
 	public function totalorder($id = null)
 	{
 		$session = $this->request->session();

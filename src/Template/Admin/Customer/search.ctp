@@ -2,17 +2,16 @@
 <table class="table table-bordered table-striped" width="100%">
   <thead>
     <tr>
-      <th width="5%">S.No</th>
-      <th width="20%">Name</th>
-      <!-- <th width="15%">Email</th>   -->
-      <th width="10%">Mobile</th>
-      <th width="10%">Referral Code</th>
-      <th width="10%">Referred by</th>
-      <th width="10%">Village</th>
-      <th width="5%">Animals</th>
-      <th width="10%">Milk Quantity</th>
-      <th width="10%">Total Orders</th>
-      <th width="10%">Created</th>
+      <th>No</th>
+      <th>Customer Details</th>
+      <th>Referral Code</th>
+      <th>Referred By</th>
+      <th>Village</th>
+      <th>Animals</th>
+      <th>Milk Qty</th>
+      <th>Orders Details</th>
+      <th>Last Order Date</th>
+      <th>User Created</th>
       <!-- <th width="8%">Status</th>      -->
       <!-- <?php if ($role_id != 2) { ?>
                       <th width="8%">Action</th>
@@ -21,10 +20,12 @@
   </thead>
   <tbody>
     <?php
-    $page = $this->request->params['paging']['Users']['page'];
-    $limit = $this->request->params['paging']['Users']['perPage'];
-    $counter = ($page * $limit) - $limit + 1;
+    $paging = $this->request->getParam('paging');
 
+    $page  = $paging['Users']['page'] ?? 1;
+    $limit = $paging['Users']['perPage'] ?? 50;
+
+    $counter = (($page - 1) * $limit) + 1;
     if (isset($users) && !empty($users)) {
       foreach ($users as $users) { //pr($users);
         //get index page orders count
@@ -38,15 +39,19 @@
     ?>
         <tr>
           <td><?php echo $counter; ?></td>
-          <td><?php echo ucwords(strtolower($users['name']));  ?></td>
-          <td><?php echo $users['mobile'];  ?></td>
-          <td><?php echo $users['referral_code'];  ?></td>
-          <td><?php
-              if (!empty($users['referred_user_id'])) {
-                echo $get_referl['referral_code'] . '<br>' . '<b>Name:</b> ' . ucwords(strtolower($get_referl['name']));
-              } else {
-                echo "N/A";
-              }  ?>
+          <td><b>Name:</b> <?php echo ucwords(strtolower($users['name']));  ?><br>
+            <b>Mobile No:</b> <?php echo $users['mobile'];  ?>
+          </td>
+          <td>
+            <?php echo $users['referral_code'];  ?>
+          </td>
+          <td>
+            <b><?php
+                if (!empty($users['referred_user_id'])) {
+                  echo '<b>Code:</b> ' . $get_referl['referral_code'] . '<br>' . '<b>Name:</b> ' . ucwords(strtolower($get_referl['name']));
+                } else {
+                  echo "N/A";
+                }  ?>
 
           </td>
           <td><?php echo $users['villagename'];  ?></td>
@@ -61,6 +66,7 @@
                                       }
                                       ?></a>
           </td>
+          <td><?php echo date('d-m-Y', strtotime($users['order_date'])); ?></td>
           <td><?php echo date('d-m-Y', strtotime($users['created'])); ?></td>
 
 
@@ -68,11 +74,14 @@
                       <?php if ($users['status'] == '1') {
                         echo $this->Html->link('', [
                           'action' => 'status',
-                          $users->id, '0'
+                          $users->id,
+                          '0'
                         ], ['title' => 'Active', 'class' => 'fa fa-check-circle', 'style' => 'font-size: 21px !important; margin-left: 12px;     color: #36cb3c;']);
                       } else {
                         echo $this->Html->link('', [
-                          'action' => 'status', $users->id, '1'
+                          'action' => 'status',
+                          $users->id,
+                          '1'
                         ], ['title' => 'Inactive', 'class' => 'fa fa-times-circle-o', 'style' => 'font-size: 21px !important; margin-left: 12px; color:#FF5722;']);
                       } ?>
                     </td> -->
@@ -95,5 +104,5 @@
     } ?>
   </tbody>
 </table>
-<?php //echo $this->element('admin/pagination'); 
+<?php echo $this->element('admin/pagination');
 ?>

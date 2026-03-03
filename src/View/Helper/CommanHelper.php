@@ -10,9 +10,7 @@ use Cake\Datasource\ConnectionManager;
 
 class CommanHelper extends Helper
 {
-    public function initialize(array $config)
-    {
-    }
+    public function initialize(array $config) {}
     public function sitesettings($id)
     {
         $articles = TableRegistry::get('Sitesettings');
@@ -48,10 +46,10 @@ class CommanHelper extends Helper
     {
         if ($vendor_id) {
             $articles = TableRegistry::get('Orders');
-            return $articles->find('all')->where(['Orders.user_id' => $user_id, 'vendor_id' => $vendor_id])->count();
+            return $articles->find('all')->where(['Orders.user_id' => $user_id, 'vendor_id' => $vendor_id, 'Orders.order_status' => 'Delivered'])->count();
         } else {
             $articles = TableRegistry::get('Orders');
-            return $articles->find('all')->where(['Orders.user_id' => $user_id])->count();
+            return $articles->find('all')->where(['Orders.user_id' => $user_id, 'Orders.order_status' => 'Delivered'])->count();
         }
     }
 
@@ -59,9 +57,9 @@ class CommanHelper extends Helper
     {
         $articles = TableRegistry::get('Orders');
         if ($articles != "" && $vendor_id) {
-            return $articles->find('all')->select(['sum' => 'SUM(Orders.total_amount)'])->where(['Orders.user_id' => $user_id, 'vendor_id' => $vendor_id])->first();
+            return $articles->find('all')->select(['sum' => 'SUM(Orders.total_amount)'])->where(['Orders.user_id' => $user_id, 'vendor_id' => $vendor_id, 'Orders.order_status' => 'Delivered'])->first();
         } else {
-            return $articles->find('all')->select(['sum' => 'SUM(Orders.total_amount)'])->where(['Orders.user_id' => $user_id])->first();
+            return $articles->find('all')->select(['sum' => 'SUM(Orders.total_amount)'])->where(['Orders.user_id' => $user_id, 'Orders.order_status' => 'Delivered'])->first();
         }
     }
     public function gettotalsales($prou_id = null)
@@ -82,11 +80,34 @@ class CommanHelper extends Helper
     public function getlocationname($vendor_id = null)
     {
 
-        $articles = TableRegistry::get('Servicearea');
-        $loaction_id = $articles->find('all')->where(['vendor_id' => $vendor_id])->first();
-        $articles = TableRegistry::get('Locations');
-        return $articles->find('all')->where(['id' => $loaction_id['location_id']])->first();
+        if (empty($vendor_id)) {
+            return [];
+        }
+
+        // Servicearea table
+        $serviceAreasTable = TableRegistry::getTableLocator()->get('Servicearea');
+
+        // Fetch all location IDs for vendor
+        $locationIds = $serviceAreasTable->find()
+            ->select(['location_id'])
+            ->where(['vendor_id' => $vendor_id])
+            ->enableHydration(false)
+            ->extract('location_id')
+            ->toArray();
+
+        if (empty($locationIds)) {
+            return [];
+        }
+
+        // Locations table
+        $locationsTable = TableRegistry::getTableLocator()->get('Locations');
+
+        // Fetch all locations
+        return $locationsTable->find()
+            ->where(['id IN' => $locationIds])
+            ->toArray();
     }
+
 
 
     public function get_location_list($vendor_id = null)
